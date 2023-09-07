@@ -18,6 +18,7 @@ const refs = {
 
 refs.blockform.addEventListener('submit', onSubmit);
 refs.btnload.addEventListener('click', onBtn);
+window.addEventListener('scroll', onScroll);
 
 async function onBtn() {
   try {
@@ -29,6 +30,30 @@ async function onBtn() {
     }
   } catch (error) {
     handleAPIError(error);
+  }
+}
+
+
+
+
+async function onScroll() {
+  const scrollPosition = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+
+   /* прокрутив сторінку до певного порогу  80% */
+  if (scrollPosition + windowHeight >= documentHeight * 0.8) {
+    try {
+      const data = await picAPI.getPic();
+      renderPic(data.hits);
+
+      if (picAPI.PAGE >= picAPI.TOTAL_PAGES) {
+        showEndOfResultsMessage();
+        window.removeEventListener('scroll', onScroll); 
+      }
+    } catch (error) {
+      handleAPIError(error);
+    }
   }
 }
 
@@ -60,9 +85,12 @@ async function onSubmit(evt) {
   }
 }
 
+
+
+
 function renderPic(hits) {
   const markup = hits.map(element => {
-    return `<a class="photo-card" href="${element.largeImageURL}">
+    return `<div class="photo-card" href="${element.largeImageURL}">
               <img src="${element.webformatURL}" alt="${element.tags}" loading="lazy" />
               <div class="info">
                   <p class="info-item"><b>Likes: ${element.likes}</b></p>
@@ -70,7 +98,7 @@ function renderPic(hits) {
                   <p class="info-item"><b>Comments: ${element.comments}</b></p>
                   <p class="info-item"><b>Downloads: ${element.downloads}</b></p>
               </div>
-            </a>`;
+            </div>`;
   }).join('');
 
   refs.picset.insertAdjacentHTML('beforeend', markup);
@@ -102,3 +130,6 @@ function enableLoadMoreButton() {
 function disableLoadMoreButton() {
   refs.btnload.disabled = true;
 }
+
+
+
