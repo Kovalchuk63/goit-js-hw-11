@@ -12,14 +12,14 @@ export class PicAPI {
     TOTAL_PAGES = 1;
 
     async getPic(query) {
-    const url = this.#BASE_URL
-    const params = new URLSearchParams({
-    q: this.QUERY,
-    key: this.#API_KEY,
-    image_type: this.#IMAGE_TYPE,
-    orientation: this.#ORIENTATION,
-    safesearch: this.#SAFESEARCH,
-    page: this.PAGE
+      const url = this.#BASE_URL
+      const params = new URLSearchParams({
+         q: this.QUERY,
+         key: this.#API_KEY,
+         image_type: this.#IMAGE_TYPE,
+         orientation: this.#ORIENTATION,
+         safesearch: this.#SAFESEARCH,
+         page: this.PAGE
     });
 
     const response = await axios.get(`${url}?${params}`);

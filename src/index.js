@@ -20,19 +20,20 @@ refs.blockform.addEventListener('submit', onSubmit);
 refs.btnload.addEventListener('click', onBtn);
 window.addEventListener('scroll', onScroll);
 
-async function onBtn() {
+async function onBtn(evt) {
   try {
-    const data = await picAPI.getPic();
+    const data = await picApi.getPic();
     renderPic(data.hits);
-
-    if (picAPI.PAGE >= picAPI.TOTAL_PAGES) {
-      showEndOfResultsMessage();
+    if (picApi.PAGE >= picApi.TOTAL_PAGES) {
+      Notiflix.Notify.warning(
+        "We're sorry, but you've reached the end of search results."
+      );
+      refs.loadMoreBtn.disabled = true;
     }
   } catch (error) {
-    handleAPIError(error);
+    console.error(error);
   }
 }
-
 
 
 
@@ -62,7 +63,7 @@ async function onSubmit(evt) {
   const query = evt.target.searchQuery.value.trim();
 
   if (query === '') {
-    showErrorMessage('Please, enter a search query.');
+    Notiflix.Notify.failure('Please, enter a search query.');
     return;
   }
 
@@ -74,7 +75,7 @@ async function onSubmit(evt) {
     const data = await picAPI.getPic();
 
     if (data.hits.length === 0) {
-      showErrorMessage('Sorry, there are no images matching your search query. Please try again.');
+      Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
     } else {
       enableLoadMoreButton();
       renderPic(data.hits);
@@ -90,7 +91,7 @@ async function onSubmit(evt) {
 
 function renderPic(hits) {
   const markup = hits.map(element => {
-    return `<div class="photo-card" href="${element.largeImageURL}">
+    return `<a class="photo-card" href="${element.largeImageURL}">
               <img src="${element.webformatURL}" alt="${element.tags}" loading="lazy" />
               <div class="info">
                   <p class="info-item"><b>Likes: ${element.likes}</b></p>
@@ -98,7 +99,7 @@ function renderPic(hits) {
                   <p class="info-item"><b>Comments: ${element.comments}</b></p>
                   <p class="info-item"><b>Downloads: ${element.downloads}</b></p>
               </div>
-            </div>`;
+            </a>`;
   }).join('');
 
   refs.picset.insertAdjacentHTML('beforeend', markup);
