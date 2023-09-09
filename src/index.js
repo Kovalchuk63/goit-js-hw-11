@@ -37,9 +37,9 @@ const refs = {
 
   async function onSubmit(evt) {
     evt.preventDefault();
-    const query = e.target.elements.searchQuery.value;
+    const query = evt.target.elements.searchQuery.value.trim();
   
-    if (query.trim() === '') {
+    if (query === '') {
       Notiflix.Notify.failure('Please enter a search query.');
       return;
     }
